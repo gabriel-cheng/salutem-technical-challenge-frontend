@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CustomerApiService } from '../../../../services/api/customer/customer.service.api';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Customer } from '../../../../model/customer';
 
 @Component({
   selector: 'app-customer-form',
@@ -9,35 +9,43 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './customer-form.component.html'
 })
-export class CustomerFormComponent implements OnInit {
-  @Input() customer: any = null;
-  @Output() formSubmit = new EventEmitter<void>();
+export class CustomerFormComponent implements OnInit, OnChanges {
+  @Input() customer: Customer | null = null;
+  @Output() formSubmit = new EventEmitter<Customer>();
+
   customerForm!: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-    private customerApiService: CustomerApiService
-  ) {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    this.buildForm();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['customer'] && changes['customer'].currentValue) {
+      if (this.customerForm) {
+        this.customerForm.patchValue(changes['customer'].currentValue);
+      }
+    }
+  }
+
+  private buildForm(): void {
     this.customerForm = this.fb.group({
-      name: [this.customer?.name || '', Validators.required],
-      address: [this.customer?.address || '', Validators.required],
-      cell: [this.customer?.cell || '', Validators.required]
+      name: ['', Validators.required],
+      address: ['', Validators.required],
+      cell: ['', Validators.required]
     });
   }
 
   onSubmit(): void {
-    if (this.customerForm.invalid) return;
+    if (this.customerForm.valid) {
+      const formValue = this.customerForm.value;
 
-    const customerData = this.customerForm.value;
+      const result: Customer = this.customer
+        ? { ...this.customer, ...formValue }
+        : formValue;
 
-    if (this.customer) {
-      this.customerApiService.updateCustomer(this.customer.customer_id, customerData)
-        .subscribe(() => this.formSubmit.emit());
-    } else {
-      this.customerApiService.addCustomer(customerData)
-        .subscribe(() => this.formSubmit.emit());
+      this.formSubmit.emit(result);
     }
   }
 }

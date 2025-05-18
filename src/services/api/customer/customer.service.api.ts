@@ -38,7 +38,7 @@ export class CustomerApiService {
     );
   }
 
-  addCustomer(customer: NgForm): Observable<Customer> {
+  addCustomer(customer: Customer): Observable<Customer> {
 
     return this.http.post<Customer>(apiUrl, customer, httpOptions)
     .pipe(
@@ -47,8 +47,10 @@ export class CustomerApiService {
     )
   }
 
-  updateCustomer(customer_id: string, customer: NgForm): Observable<Customer> {
+  updateCustomer(customer_id: string, customer: Customer): Observable<Customer> {
     const url = `${apiUrl}/${customer_id}`;
+
+    delete customer.customerOrders;
 
     return this.http.put<Customer>(url, customer, httpOptions)
     .pipe(

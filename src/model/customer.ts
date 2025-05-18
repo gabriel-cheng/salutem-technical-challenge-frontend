@@ -1,10 +1,10 @@
 export class Customer {
 
-  customer_id: string;
+  customer_id?: string;
   name: string;
   address: string;
   cell: string;
-
+  customerOrders: any
 
   constructor(
     customer_id: string,

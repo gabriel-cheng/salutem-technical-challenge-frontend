@@ -7,52 +7,68 @@ import { CustomerFormComponent } from '../../forms/customer-form/customer-form.c
 @Component({
   selector: 'app-customers',
   standalone: true,
-  imports: [
-    CommonModule,
-    CustomerFormComponent
-  ],
+  imports: [CommonModule, CustomerFormComponent],
   templateUrl: './customers.component.html',
   styleUrls: ['./customers.component.css']
 })
 export class CustomersComponent implements OnInit {
   customers: Customer[] = [];
   isFormVisible = false;
-  selectedCustomer: any = null;
+  selectedCustomer: Customer | null = null;
 
-  constructor(private customerService: CustomerApiService) {}
-
-  showCreateForm() {
-    this.selectedCustomer = null;
-    this.isFormVisible = true;
-  }
-
-  onFormSubmited() {
-    this.isFormVisible = false;
-    this.loadCustomers();
-  }
+  constructor(private customerApiService: CustomerApiService) {}
 
   ngOnInit(): void {
     this.loadCustomers();
   }
 
   loadCustomers(): void {
-    this.customerService.getCustomers().subscribe(data => {
+    this.customerApiService.getCustomers().subscribe(data => {
       this.customers = data;
-      console.log(this.customers);
     });
   }
 
-  onDeleteCustomer(customer_id: string) {
-    if (confirm('Tem certeza que deseja deletar este cliente?')) {
-      this.customerService.deleteCustomer(customer_id).subscribe({
+  showCreateForm(): void {
+    this.selectedCustomer = null;
+    this.isFormVisible = true;
+  }
+
+  editCustomer(customer: Customer): void {
+    this.selectedCustomer = { ...customer };
+    this.isFormVisible = true;
+  }
+
+  onFormSubmited(customer: Customer) {
+    if (customer.customer_id) {
+      const { customer_id, ...data } = customer;
+      this.customerApiService.updateCustomer(customer_id, data).subscribe({
         next: () => {
-          this.customers = this.customers.filter(c => c.customer_id !== customer_id);
+          this.loadCustomers();
+          this.isFormVisible = false;
         },
-        error: error => {
-          console.error('Erro ao deletar cliente:', error);
-        }
+        error: (err) => console.error('Erro ao atualizar cliente:', err)
+      });
+    } else {
+      console.log('Dados para criar:', customer);
+      this.customerApiService.addCustomer(customer).subscribe({
+        next: () => {
+          this.loadCustomers();
+          this.isFormVisible = false;
+        },
+        error: (err) => console.error('Erro ao criar cliente:', err)
       });
     }
   }
 
+
+  onDeleteCustomer(customer_id: string): void {
+    if (confirm('Tem certeza que deseja deletar este cliente?')) {
+      this.customerApiService.deleteCustomer(customer_id).subscribe({
+        next: () => {
+          this.customers = this.customers.filter(c => c.customer_id !== customer_id);
+        },
+        error: err => console.error('Erro ao deletar cliente:', err)
+      });
+    }
+  }
 }
