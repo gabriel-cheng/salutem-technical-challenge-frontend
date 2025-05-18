@@ -1,48 +1,52 @@
-import { Component, Input, OnChanges } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Drink } from '../../../../model/drink';
-import { DrinkApiService } from '../../../../services/api/drink/drink.service.api';
 
 @Component({
   selector: 'app-drink-form',
-  templateUrl: './drink-form.component.html',
-  imports: [ ReactiveFormsModule ]
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './drink-form.component.html'
 })
-export class DrinkFormComponent implements OnChanges {
-  @Input() drink?: Drink;
+export class DrinkFormComponent implements OnInit, OnChanges {
+  @Input() drink: Drink | null = null;
+  @Output() formSubmit = new EventEmitter<Drink>();
 
-  form: FormGroup;
+  drinkForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private drinkApi: DrinkApiService) {
-    this.form = this.fb.group({
-      code: [''],
-      description: [''],
-      unity_price: [0],
-      sugar_flag: ['']
-    });
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.buildForm();
   }
 
-  ngOnChanges(): void {
-    if (this.drink) {
-      this.form.patchValue(this.drink);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['drink'] && changes['drink'].currentValue) {
+      if (this.drinkForm) {
+        this.drinkForm.patchValue(changes['drink'].currentValue);
+      }
     }
   }
 
+  private buildForm(): void {
+    this.drinkForm = this.fb.group({
+      code: ['', Validators.required],
+      description: ['', Validators.required],
+      unity_price: [0, Validators.required],
+      sugar_flag: ['', Validators.required]
+    });
+  }
+
   onSubmit(): void {
-    const drinkData = this.form.value;
+    if (this.drinkForm.valid) {
+      const formValue = this.drinkForm.value;
 
-    console.log(drinkData);
+      const result: Drink = this.drink
+        ? { ...this.drink, ...formValue }
+        : formValue;
 
-    if (drinkData.id) {
-      this.drinkApi.updateDrink(drinkData.id, drinkData).subscribe({
-        next: () => console.log('Bebida atualizada com sucesso.'),
-        error: (err) => console.error('Erro ao atualizar:', err)
-      });
-    } else {
-      this.drinkApi.addDrink(drinkData).subscribe({
-        next: () => console.log('Bebida criada com sucesso.'),
-        error: (err) => console.error('Erro ao criar:', err)
-      });
+      this.formSubmit.emit(result);
     }
   }
 }

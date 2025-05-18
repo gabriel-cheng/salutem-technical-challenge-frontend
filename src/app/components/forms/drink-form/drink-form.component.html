@@ -1,4 +1,4 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="mb-4">
+<form [formGroup]="drinkForm" (ngSubmit)="onSubmit()">
   <div class="mb-3">
     <label for="code" class="form-label">Código</label>
     <input type="text" id="code" class="form-control" formControlName="code">
@@ -23,5 +23,7 @@
     </select>
   </div>
 
-  <button type="submit" class="btn btn-success">Salvar</button>
+  <button type="submit" class="btn btn-success">
+    {{ drink ? 'Atualizar' : 'Criar' }} Cliente
+  </button>
 </form>

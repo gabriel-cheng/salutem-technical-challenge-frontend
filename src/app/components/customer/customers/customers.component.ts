@@ -49,7 +49,6 @@ export class CustomersComponent implements OnInit {
         error: (err) => console.error('Erro ao atualizar cliente:', err)
       });
     } else {
-      console.log('Dados para criar:', customer);
       this.customerApiService.addCustomer(customer).subscribe({
         next: () => {
           this.loadCustomers();

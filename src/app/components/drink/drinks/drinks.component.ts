@@ -1,28 +1,31 @@
 import { Component, OnInit } from '@angular/core';
-import { Drink } from '../../../../model/drink';
-import { DrinkApiService } from '../../../../services/api/drink/drink.service.api';
-import { DrinkFormComponent } from '../../forms/drink-form/drink-form.component';
 import { CommonModule } from '@angular/common';
+import { Drink } from '../../../../model/drink';
+import { DrinkFormComponent } from '../../forms/drink-form/drink-form.component';
+import { DrinkApiService } from '../../../../services/api/drink/drink.service.api';
 
 @Component({
   selector: 'app-drinks',
+  standalone: true,
+  imports: [CommonModule, DrinkFormComponent],
   templateUrl: './drinks.component.html',
-  imports: [DrinkFormComponent, CommonModule],
-  standalone: true
+  styleUrls: ['./drinks.component.css']
 })
 export class DrinksComponent implements OnInit {
   drinks: Drink[] = [];
   isFormVisible = false;
-  selectedDrink?: Drink | null = null;
+  selectedDrink: Drink | null = null;
 
-  constructor(private drinkService: DrinkApiService) {}
+  constructor(private drinkApiService: DrinkApiService) {}
 
   ngOnInit(): void {
     this.loadDrinks();
   }
 
   loadDrinks(): void {
-    this.drinkService.getAll().subscribe(drinks => this.drinks = drinks);
+    this.drinkApiService.getDrinks().subscribe(data => {
+      this.drinks = data;
+    });
   }
 
   showCreateForm(): void {
@@ -30,27 +33,42 @@ export class DrinksComponent implements OnInit {
     this.isFormVisible = true;
   }
 
-  onEditDrink(drink: Drink): void {
+  editDrink(drink: Drink): void {
     this.selectedDrink = { ...drink };
     this.isFormVisible = true;
   }
 
-  onDeleteDrink(id: string): void {
-    this.drinkService.deleteDrink(id).subscribe(() => this.loadDrinks());
-  }
-
-  onFormSubmited(drink: Drink): void {
+  onFormSubmited(drink: Drink) {
     if (drink.drinkId) {
       const { drinkId, ...data } = drink;
-      this.drinkService.updateDrink(drinkId, data).subscribe(() => {
-        this.loadDrinks();
-        this.isFormVisible = false;
+      this.drinkApiService.updateDrink(drinkId, data).subscribe({
+        next: () => {
+          this.loadDrinks();
+          this.isFormVisible = false;
+        },
+        error: (err) => console.error('Erro ao atualizar bebida:', err)
       });
     } else {
-      this.drinkService.addDrink(drink).subscribe(() => {
-        this.loadDrinks();
-        this.isFormVisible = false;
+      this.drinkApiService.addDrink(drink).subscribe({
+        next: () => {
+          this.loadDrinks();
+          this.isFormVisible = false;
+        },
+        error: (err) => console.error('Erro ao criar cliente:', err)
+      });
+    }
+  }
+
+
+  onDeleteDrink(drinkId: string): void {
+    if (confirm('Tem certeza que deseja deletar este cliente?')) {
+      this.drinkApiService.deleteDrink(drinkId).subscribe({
+        next: () => {
+          this.drinks = this.drinks.filter(c => c.drinkId !== drinkId);
+        },
+        error: err => console.error('Erro ao deletar cliente:', err)
       });
     }
   }
 }
+
