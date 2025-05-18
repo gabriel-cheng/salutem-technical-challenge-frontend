@@ -1,0 +1,29 @@
+<form [formGroup]="ingredientForm" (ngSubmit)="onSubmit()">
+  <div class="mb-3">
+    <label for="code" class="form-label">Código</label>
+    <input type="text" id="code" class="form-control" formControlName="code">
+  </div>
+
+  <div class="mb-3">
+    <label for="description" class="form-label">Descrição</label>
+    <input type="text" id="description" class="form-control" formControlName="description">
+  </div>
+
+  <div class="mb-3">
+    <label for="unity_price" class="form-label">Preço Unitário</label>
+    <input type="number" step="0.01" id="unity_price" class="form-control" formControlName="unity_price">
+  </div>
+
+  <div class="mb-3">
+    <label for="sugar_flag" class="form-label">É adicional?</label>
+    <select id="sugar_flag" class="form-select" formControlName="additional_flag">
+      <option value="" disabled selected>Selecione</option>
+      <option value="yes">Sim</option>
+      <option value="no">Não</option>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-success">
+    {{ ingredient ? 'Atualizar' : 'Criar' }} Cliente
+  </button>
+</form>

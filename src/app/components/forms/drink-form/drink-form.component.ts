@@ -31,10 +31,10 @@ export class DrinkFormComponent implements OnInit, OnChanges {
 
   private buildForm(): void {
     this.drinkForm = this.fb.group({
-      code: ['', Validators.required],
-      description: ['', Validators.required],
-      unity_price: [0, Validators.required],
-      sugar_flag: ['', Validators.required]
+      code: [this.drink?.code || '', Validators.required],
+      description: [this.drink?.description || '', Validators.required],
+      unity_price: [this.drink?.unity_price || 0, Validators.required],
+      sugar_flag: [this.drink?.sugar_flag || '', Validators.required]
     });
   }
 

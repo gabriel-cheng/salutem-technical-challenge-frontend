@@ -31,9 +31,9 @@ export class CustomerFormComponent implements OnInit, OnChanges {
 
   private buildForm(): void {
     this.customerForm = this.fb.group({
-      name: ['', Validators.required],
-      address: ['', Validators.required],
-      cell: ['', Validators.required]
+      name: [this.customer?.name || '', Validators.required],
+      address: [this.customer?.address || '', Validators.required],
+      cell: [this.customer?.cell || '', Validators.required]
     });
   }
 

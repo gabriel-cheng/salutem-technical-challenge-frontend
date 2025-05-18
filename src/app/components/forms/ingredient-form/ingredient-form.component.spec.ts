@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { IngredientNewComponent } from './ingredient-new.component';
+import { IngredientFormComponent } from './ingredient-form.component';
 
-describe('IngredientNewComponent', () => {
-  let component: IngredientNewComponent;
-  let fixture: ComponentFixture<IngredientNewComponent>;
+describe('IngredientFormComponent', () => {
+  let component: IngredientFormComponent;
+  let fixture: ComponentFixture<IngredientFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IngredientNewComponent]
+      imports: [IngredientFormComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(IngredientNewComponent);
+    fixture = TestBed.createComponent(IngredientFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
