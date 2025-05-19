@@ -59,7 +59,6 @@ export class HamburgersComponent implements OnInit {
     }
   }
 
-
   onDeleteHamburger(hamburgerId: string): void {
     if (confirm('Tem certeza que deseja deletar este cliente?')) {
       this.hamburgerApiService.deleteHamburger(hamburgerId).subscribe({

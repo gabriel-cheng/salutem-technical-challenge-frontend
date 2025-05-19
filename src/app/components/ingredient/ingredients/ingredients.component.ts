@@ -59,7 +59,6 @@ export class IngredientsComponent implements OnInit {
     }
   }
 
-
   onDeleteIngredient(ingredientId: string): void {
     if (confirm('Tem certeza que deseja deletar este cliente?')) {
       this.ingredientApiService.deleteIngredient(ingredientId).subscribe({

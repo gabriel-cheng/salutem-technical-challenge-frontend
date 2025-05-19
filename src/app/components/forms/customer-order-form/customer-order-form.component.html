@@ -1,0 +1,68 @@
+<form [formGroup]="customerOrderForm" (ngSubmit)="onSubmit()">
+
+  <div class="mb-3">
+    <label for="code" class="form-label">Código</label>
+    <input type="text" id="code" class="form-control" formControlName="code" />
+  </div>
+
+  <div class="mb-3">
+    <label for="created_at" class="form-label">Data do Pedido</label>
+    <input type="date" id="created_at" class="form-control" formControlName="created_at" />
+  </div>
+
+  <div class="mb-3">
+    <label for="description" class="form-label">Descrição</label>
+    <input type="text" id="description" class="form-control" formControlName="description" />
+  </div>
+
+  <div class="mb-3">
+    <label for="observation" class="form-label">Observação</label>
+    <textarea id="observation" class="form-control" formControlName="observation" rows="2"></textarea>
+  </div>
+
+  <fieldset class="border p-3 mb-3">
+    <legend class="w-auto px-2">Hambúrgueres</legend>
+    <div *ngFor="let item of availableHamburgers" class="form-check">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        [checked]="isHamburgerSelected(item)"
+        (change)="toggleHamburger(item, $event)"
+        id="hamburger-{{item.hamburgerId}}"
+      />
+      <label class="form-check-label" for="hamburger-{{item.hamburgerId}}">
+        {{ item.description }}
+      </label>
+    </div>
+  </fieldset>
+
+  <div class="mb-3">
+    <label for="customerId" class="form-label">Cliente</label>
+    <select id="customerId" class="form-select" formControlName="customerId" required>
+      <option value="">-- Selecione um cliente --</option>
+      <option *ngFor="let customer of customers" [value]="customer.customer_id">
+        {{ customer.name }} - {{ customer.cell }}
+      </option>
+    </select>
+  </div>
+
+  <fieldset class="border p-3 mb-3">
+    <legend class="w-auto px-2">Bebidas</legend>
+    <div *ngFor="let drink of availableDrinks" class="form-check">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        [checked]="isDrinkSelected(drink)"
+        (change)="toggleDrink(drink, $event)"
+        id="drink-{{drink.drinkId}}"
+      />
+      <label class="form-check-label" for="drink-{{drink.drinkId}}">
+        {{ drink.description }}
+      </label>
+    </div>
+  </fieldset>
+
+  <button type="submit" class="btn btn-success">
+    {{ customer_order ? 'Atualizar' : 'Criar' }} Pedido
+  </button>
+</form>

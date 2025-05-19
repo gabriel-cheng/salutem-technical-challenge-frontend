@@ -1,3 +1,4 @@
+import { IngredientWrapper } from "./customer_order";
 import { Ingredient } from "./ingredient";
 
 export class Hamburger {
@@ -5,14 +6,14 @@ export class Hamburger {
   code: string;
   description: string;
   unity_price: number;
-  ingredients: Array<{ ingredient: Ingredient }>;
+  ingredients: IngredientWrapper[];
 
   constructor(
     hamburgerId: string,
     code: string,
     description: string,
     unity_price: number,
-    ingredients: Array<{ ingredient: Ingredient }>
+    ingredients: IngredientWrapper[]
   ) {
     this.hamburgerId = hamburgerId;
     this.code = code;

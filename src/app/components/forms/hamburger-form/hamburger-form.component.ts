@@ -36,9 +36,9 @@ export class HamburgerFormComponent implements OnInit {
 
   buildForm(): void {
     this.hamburgerForm = this.fb.group({
-      code: ['', Validators.required],
-      description: ['', Validators.required],
-      unity_price: [0, [Validators.required, Validators.min(0.01)]]
+      code: [this.hamburger?.code || '', Validators.required],
+      description: [this.hamburger?.description || '', Validators.required],
+      unity_price: [this.hamburger?.unity_price || 0, [Validators.required, Validators.min(0.01)]]
     });
   }
 

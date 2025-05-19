@@ -25,11 +25,17 @@ export class HamburgerApiService {
     return this.http.post(this.apiUrl, payload, { responseType: 'text' });
   }
 
-  updateHamburger(hamburgerId: string, hamburger: Hamburger): Observable<Hamburger> {
-    return this.http.put<Hamburger>(`${this.apiUrl}/${hamburgerId}`, hamburger);
+  updateHamburger(hamburgerId: string, hamburger: Hamburger): Observable<string> {
+    return this.http.put<string>(
+      `${this.apiUrl}/${hamburgerId}`,
+      hamburger,
+      { responseType: 'text' as 'json' });
   }
 
-  deleteHamburger(hamburgerId: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${hamburgerId}`);
+  deleteHamburger(hamburgerId: string): Observable<string> {
+    return this.http.delete<string>(
+      `${this.apiUrl}/${hamburgerId}`,
+      { responseType: 'text' as 'json' }
+    );
   }
 }
