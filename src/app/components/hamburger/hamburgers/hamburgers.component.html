@@ -36,10 +36,12 @@
         <td>{{ hamburger.unity_price }}</td>
         <td>
         <ul>
-          <li *ngFor="let item of hamburger.ingredients">
-              {{ item.ingredient.description }}
+          <ul>
+            <li *ngFor="let item of hamburger.ingredients">
+              {{ item.ingredient.description  }}
             </li>
           </ul>
+        </ul>
         </td>
         <td class="d-flex gap-2">
           <button

@@ -20,7 +20,9 @@ export class HamburgerApiService {
   }
 
   addHamburger(hamburger: Hamburger): Observable<string> {
-    return this.http.post(this.apiUrl, hamburger, { responseType: 'text' });
+    const payload = hamburger;
+
+    return this.http.post(this.apiUrl, payload, { responseType: 'text' });
   }
 
   updateHamburger(hamburgerId: string, hamburger: Hamburger): Observable<Hamburger> {

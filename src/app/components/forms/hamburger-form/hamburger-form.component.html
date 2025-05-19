@@ -14,7 +14,17 @@
     <input type="number" step="0.01" id="unity_price" class="form-control" formControlName="unity_price">
   </div>
 
+  <div *ngFor="let ingredient of availableIngredients">
+    <input
+      type="checkbox"
+      [checked]="isIngredientSelected(ingredient)"
+      (change)="onIngredientToggle(ingredient, $event)"
+      id="{{ingredient.ingredientId}}"
+    />
+    <label for="{{ingredient.ingredientId}}">{{ ingredient.description }}</label>
+  </div>
+
   <button type="submit" class="btn btn-success">
-    {{ hamburger ? 'Atualizar' : 'Criar' }} Cliente
+    {{ hamburger ? 'Atualizar' : 'Criar' }} Hambúrguer
   </button>
 </form>
