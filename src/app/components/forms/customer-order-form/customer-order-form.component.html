@@ -62,6 +62,22 @@
     </div>
   </fieldset>
 
+  <fieldset class="border p-3 mb-3">
+    <legend class="w-auto px-2">Adicionais</legend>
+    <div *ngFor="let item of availableAdditional" class="form-check">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        [checked]="isAdditionalSelected(item)"
+        (change)="toggleAdditional(item, $event)"
+        id="additional-{{item.ingredientId}}"
+      />
+      <label class="form-check-label" for="additional-{{item.ingredientId}}">
+        {{ item.description }}
+      </label>
+    </div>
+  </fieldset>
+
   <button type="submit" class="btn btn-success">
     {{ customer_order ? 'Atualizar' : 'Criar' }} Pedido
   </button>

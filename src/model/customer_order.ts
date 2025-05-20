@@ -1,6 +1,6 @@
 import { Customer } from './customer';
-import { Hamburger } from './hamburger';
 import { Drink } from './drink';
+import { HamburgerResponseType } from './hamburger';
 
 export interface IngredientWrapper {
   ingredient: {
@@ -13,7 +13,7 @@ export interface IngredientWrapper {
 }
 
 export interface OrderItemHamburger {
-  hamburger: Hamburger;
+  hamburger: HamburgerResponseType;
 }
 
 export interface OrderItemDrink {

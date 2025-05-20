@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Hamburger } from '../../../../model/hamburger';
+import { HamburgerRequestType } from '../../../../model/hamburger';
 import { Ingredient } from '../../../../model/ingredient';
 import { IngredientApiService } from '../../../../services/api/ingredient/ingredient.service.api';
 import { CommonModule } from '@angular/common';
@@ -13,8 +13,8 @@ import { CommonModule } from '@angular/common';
   imports: [ReactiveFormsModule, CommonModule]
 })
 export class HamburgerFormComponent implements OnInit {
-  @Input() hamburger: Hamburger | null = null;
-  @Output() formSubmit = new EventEmitter<Hamburger>();
+  @Input() hamburger: HamburgerRequestType | null = null;
+  @Output() formSubmit = new EventEmitter<HamburgerRequestType>();
 
   hamburgerForm!: FormGroup;
   availableIngredients: Ingredient[] = [];
@@ -28,23 +28,25 @@ export class HamburgerFormComponent implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.loadIngredients();
-
-    if (this.hamburger?.ingredients) {
-      this.selectedIngredients = this.hamburger.ingredients.map((i: any) => i.ingredient ?? i);
-    }
   }
 
   buildForm(): void {
     this.hamburgerForm = this.fb.group({
       code: [this.hamburger?.code || '', Validators.required],
       description: [this.hamburger?.description || '', Validators.required],
-      unity_price: [this.hamburger?.unity_price || 0, [Validators.required, Validators.min(0.01)]]
+      unity_price: [this.hamburger?.unity_price || 0, [Validators.required, Validators.min(0.01)]],
     });
   }
 
   loadIngredients(): void {
-    this.ingredientService.getIngredients().subscribe((ingredients_id: any) => {
-      this.availableIngredients = ingredients_id;
+    this.ingredientService.getIngredients().subscribe((ingredients: Ingredient[]) => {
+      this.availableIngredients = ingredients;
+
+      if (this.hamburger?.ingredients_id) {
+        this.selectedIngredients = this.availableIngredients.filter(i =>
+          i.ingredientId && this.hamburger!.ingredients_id!.includes(i.ingredientId)
+        );
+      }
     });
   }
 
@@ -62,14 +64,12 @@ export class HamburgerFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.hamburgerForm.value.ingredients_id = this.selectedIngredients.map(i => i.ingredientId);
-
     if (this.hamburgerForm.valid) {
       const formValue = this.hamburgerForm.value;
 
-      const result: Hamburger = this.hamburger
-        ? { ...this.hamburger, ...formValue, ingredients_id: this.selectedIngredients.map(i => i.ingredientId) }
-        : { ...formValue, ingredients_id: this.selectedIngredients.map(i => i.ingredientId) };
+      const result: HamburgerRequestType = this.hamburger
+      ? { ...this.hamburger, ...formValue, ingredients_id: this.selectedIngredients.map(i => i.ingredientId) }
+      : { ...formValue, ingredients_id: this.selectedIngredients.map(i => i.ingredientId) };
 
       this.formSubmit.emit(result);
     }

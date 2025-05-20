@@ -1,24 +1,45 @@
 import { IngredientWrapper } from "./customer_order";
-import { Ingredient } from "./ingredient";
 
-export class Hamburger {
+export class HamburgerResponseType {
+    hamburgerId?: string;
+    code: string;
+    description: string;
+    unity_price: number;
+    ingredients: IngredientWrapper[];
+
+    constructor(
+      hamburgerId: string,
+      code: string,
+      description: string,
+      unity_price: number,
+      ingredients: IngredientWrapper[]
+    ) {
+      this.hamburgerId = hamburgerId;
+      this.code = code;
+      this.description = description;
+      this.unity_price = unity_price;
+      this.ingredients = ingredients;
+    }
+}
+
+export class HamburgerRequestType {
   hamburgerId?: string;
   code: string;
   description: string;
   unity_price: number;
-  ingredients: IngredientWrapper[];
+  ingredients_id: string[];
 
   constructor(
     hamburgerId: string,
     code: string,
     description: string,
     unity_price: number,
-    ingredients: IngredientWrapper[]
+    ingredients_id: string[]
   ) {
     this.hamburgerId = hamburgerId;
     this.code = code;
     this.description = description;
     this.unity_price = unity_price;
-    this.ingredients = ingredients;
+    this.ingredients_id = ingredients_id;
   }
 }

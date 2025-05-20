@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Hamburger } from '../../../../model/hamburger';
+import { HamburgerRequestType, HamburgerResponseType } from '../../../../model/hamburger';
 import { HamburgerFormComponent } from '../../forms/hamburger-form/hamburger-form.component';
 import { HamburgerApiService } from '../../../../services/api/hamburger/hamburger.service.api';
 
@@ -12,9 +12,9 @@ import { HamburgerApiService } from '../../../../services/api/hamburger/hamburge
   styleUrls: ['./hamburgers.component.css']
 })
 export class HamburgersComponent implements OnInit {
-  hamburgers: Hamburger[] = [];
+  hamburgers: HamburgerResponseType[] = [];
   isFormVisible = false;
-  selectedHamburger: Hamburger | null = null;
+  selectedHamburger: HamburgerRequestType | null = null;
 
   constructor(private hamburgerApiService: HamburgerApiService) {}
 
@@ -33,12 +33,18 @@ export class HamburgersComponent implements OnInit {
     this.isFormVisible = true;
   }
 
-  editHamburger(hamburger: Hamburger): void {
-    this.selectedHamburger = { ...hamburger };
+  editHamburger(hamburger: HamburgerResponseType): void {
+    this.selectedHamburger = {
+      hamburgerId: hamburger.hamburgerId,
+      code: hamburger.code,
+      description: hamburger.description,
+      unity_price: hamburger.unity_price,
+      ingredients_id: hamburger.ingredients.map(item => item.ingredient.ingredientId!)
+    };
     this.isFormVisible = true;
   }
 
-  onFormSubmited(hamburger: Hamburger) {
+  onFormSubmited(hamburger: HamburgerRequestType) {
     if (hamburger.hamburgerId) {
       const { hamburgerId, ...data } = hamburger;
       this.hamburgerApiService.updateHamburger(hamburgerId, data).subscribe({
@@ -60,14 +66,13 @@ export class HamburgersComponent implements OnInit {
   }
 
   onDeleteHamburger(hamburgerId: string): void {
-    if (confirm('Tem certeza que deseja deletar este cliente?')) {
+    if (confirm('Tem certeza que deseja deletar este hamburger?')) {
       this.hamburgerApiService.deleteHamburger(hamburgerId).subscribe({
         next: () => {
-          this.hamburgers = this.hamburgers.filter(c => c.hamburgerId !== hamburgerId);
+          this.hamburgers = this.hamburgers.filter(h => h.hamburgerId !== hamburgerId);
         },
         error: err => console.error('Erro ao deletar hamburger:', err)
       });
     }
   }
 }
-
