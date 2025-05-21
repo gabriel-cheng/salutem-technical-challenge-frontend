@@ -33,8 +33,8 @@ export class CustomerOrderFormComponent implements OnInit {
 
   observations: Observation[] = [];
 
-  availableIngredients: Ingredient[] = [];
-  selectedIngredients: IngredientWrapper[] = [];
+  availableAdditional: Ingredient[] = [];
+  selectedAdditional: IngredientWrapper[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -72,23 +72,55 @@ export class CustomerOrderFormComponent implements OnInit {
 
   loadAdditional(): void {
     this.ingredientService.getIngredients().subscribe((ingredients: Ingredient[]) => {
-      this.availableIngredients = ingredients.filter(i => i.additional_flag == "yes");
+      this.availableAdditional = ingredients.filter(i => i.additional_flag == "yes");
     });
   }
 
-  onIngredientToggle(ingredient: Ingredient, event: Event): void {
+  onHamburgerToggle(hamburger: HamburgerResponseType, event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
-    if (checked) {
-      this.selectedIngredients.map((i) => {
-        i.ingredient = ingredient;
-      });
-    } else {
-      this.selectedIngredients = this.selectedIngredients.filter(i => i.ingredient.ingredientId !== ingredient.ingredientId);
+
+    if(checked) {
+      this.selectedHamburgers.push({ hamburger });
+      return;
     }
+
+    this.selectedHamburgers = this.selectedHamburgers.filter(i => i.hamburger.hamburgerId !== hamburger.hamburgerId);
   }
 
-  isIngredientSelected(ingredient: Ingredient): boolean {
-    return this.selectedIngredients.some(i => i.ingredient.ingredientId === ingredient.ingredientId);
+  onDrinkToggle(drink: Drink, event: Event): void {
+    const checked = (event.target as HTMLInputElement);
+
+    if(checked) {
+      this.selectedDrinks.push({ drink });
+
+      return;
+    }
+
+    this.selectedDrinks = this.selectedDrinks.filter(i => i.drink.drinkId !== drink.drinkId);
+  }
+
+  onAdditionalToggle(ingredient: Ingredient, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    if(checked) {
+      this.selectedAdditional.push({ ingredient });
+      console.log(this.selectedAdditional);
+      return;
+    }
+
+    this.selectedAdditional = this.selectedAdditional.filter(i => i.ingredient.ingredientId !== ingredient.ingredientId);
+  }
+
+  isHamburgerSelected(hamburger: HamburgerResponseType): boolean {
+    return this.selectedHamburgers.some(i => i.hamburger.hamburgerId === hamburger.hamburgerId);
+  }
+
+  isDrinkSelected(drink: Drink): boolean {
+    return this.selectedDrinks.some(i => i.drink.drinkId === drink.drinkId);
+  }
+
+  isAdditionalSelected(ingredient: Ingredient): boolean {
+    return this.selectedAdditional.some(i => i.ingredient.ingredientId === ingredient.ingredientId);
   }
 
   onSubmit(): void {
@@ -96,8 +128,8 @@ export class CustomerOrderFormComponent implements OnInit {
       const formValue = this.customerOrderForm.value;
 
       const result: CustomerOrderRequest = this.customer_order
-      ? { ...this.customer_order, ...formValue, additional: this.selectedIngredients.map((i) => i.ingredient.ingredientId) }
-      : { ...formValue, additional: this.selectedIngredients.map(i => i.ingredient.ingredientId) };
+      ? { ...this.customer_order, ...formValue, additional: this.selectedAdditional.map((i) => i.ingredient.ingredientId) }
+      : { ...formValue, additional: this.selectedAdditional.map(i => i.ingredient.ingredientId) };
 
       this.formSubmit.emit(result);
     }
