@@ -72,7 +72,7 @@ export class CustomerOrderFormComponent implements OnInit {
 
   loadAdditional(): void {
     this.ingredientService.getIngredients().subscribe((ingredients: Ingredient[]) => {
-      this.availableIngredients = ingredients;
+      this.availableIngredients = ingredients.filter(i => i.additional_flag == "yes");
     });
   }
 
@@ -80,9 +80,7 @@ export class CustomerOrderFormComponent implements OnInit {
     const checked = (event.target as HTMLInputElement).checked;
     if (checked) {
       this.selectedIngredients.map((i) => {
-        if(ingredient.additional_flag == "yes") {
-          i.ingredient = ingredient;
-        }
+        i.ingredient = ingredient;
       });
     } else {
       this.selectedIngredients = this.selectedIngredients.filter(i => i.ingredient.ingredientId !== ingredient.ingredientId);
