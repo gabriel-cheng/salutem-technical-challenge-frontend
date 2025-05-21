@@ -44,6 +44,7 @@ export class Observation {
 }
 
 export class CustomerOrderRequest {
+  customerOrderId?: string;
   code: string;
   description: string;
   created_at: string;
@@ -54,6 +55,7 @@ export class CustomerOrderRequest {
   additional: string[];
 
   constructor(
+    customerOrderId: string,
     code: string,
     description: string,
     created_at: string,
@@ -63,6 +65,7 @@ export class CustomerOrderRequest {
     observations: string[],
     additional: string[]
   ) {
+    this.customerOrderId = customerOrderId,
     this.code = code;
     this.description = description;
     this.created_at = created_at;

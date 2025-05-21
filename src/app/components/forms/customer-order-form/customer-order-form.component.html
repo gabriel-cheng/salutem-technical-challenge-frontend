@@ -20,7 +20,7 @@
     <textarea id="observation" class="form-control" formControlName="observation" rows="2"></textarea>
   </div>
 
-  <fieldset class="border p-3 mb-3">
+  <!-- <fieldset class="border p-3 mb-3">
     <legend class="w-auto px-2">Hambúrgueres</legend>
     <div *ngFor="let item of availableHamburgers" class="form-check">
       <input
@@ -34,9 +34,9 @@
         {{ item.description }}
       </label>
     </div>
-  </fieldset>
+  </fieldset> -->
 
-  <div class="mb-3">
+  <!-- <div class="mb-3">
     <label for="customerId" class="form-label">Cliente</label>
     <select id="customerId" class="form-select" formControlName="customerId" required>
       <option value="">-- Selecione um cliente --</option>
@@ -44,9 +44,9 @@
         {{ customer.name }} - {{ customer.cell }}
       </option>
     </select>
-  </div>
+  </div> -->
 
-  <fieldset class="border p-3 mb-3">
+  <!-- <fieldset class="border p-3 mb-3">
     <legend class="w-auto px-2">Bebidas</legend>
     <div *ngFor="let drink of availableDrinks" class="form-check">
       <input
@@ -60,9 +60,9 @@
         {{ drink.description }}
       </label>
     </div>
-  </fieldset>
+  </fieldset> -->
 
-  <fieldset class="border p-3 mb-3">
+  <!-- <fieldset class="border p-3 mb-3">
     <legend class="w-auto px-2">Adicionais</legend>
     <div *ngFor="let item of availableAdditional" class="form-check">
       <input
@@ -76,7 +76,7 @@
         {{ item.description }}
       </label>
     </div>
-  </fieldset>
+  </fieldset> -->
 
   <button type="submit" class="btn btn-success">
     {{ customer_order ? 'Atualizar' : 'Criar' }} Pedido

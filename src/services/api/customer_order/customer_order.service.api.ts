@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CustomerOrder } from '../../../model/customer_order';
+import { CustomerOrderRequest, CustomerOrderResponse } from '../../../model/customer_order';
 
 @Injectable({
   providedIn: 'root'
@@ -11,21 +11,21 @@ export class CustomerOrderApiService {
 
   constructor(private http: HttpClient) {}
 
-  getCustomerOrders(): Observable<CustomerOrder[]> {
-    return this.http.get<CustomerOrder[]>(this.apiUrl);
+  getCustomerOrders(): Observable<CustomerOrderResponse[]> {
+    return this.http.get<CustomerOrderResponse[]>(this.apiUrl);
   }
 
-  getCustomerOrder(CustomerOrderId: string): Observable<CustomerOrder> {
-    return this.http.get<CustomerOrder>(`${this.apiUrl}/${CustomerOrderId}`);
+  getCustomerOrder(CustomerOrderId: string): Observable<CustomerOrderResponse> {
+    return this.http.get<CustomerOrderResponse>(`${this.apiUrl}/${CustomerOrderId}`);
   }
 
-  addCustomerOrder(CustomerOrder: CustomerOrder): Observable<string> {
+  addCustomerOrder(CustomerOrder: CustomerOrderRequest): Observable<string> {
     const payload = CustomerOrder;
 
     return this.http.post(this.apiUrl, payload, { responseType: 'text' });
   }
 
-  updateCustomerOrder(CustomerOrderId: string, CustomerOrder: CustomerOrder): Observable<string> {
+  updateCustomerOrder(CustomerOrderId: string, CustomerOrder: CustomerOrderRequest): Observable<string> {
     return this.http.put<string>(
       `${this.apiUrl}/${CustomerOrderId}`,
       CustomerOrder,

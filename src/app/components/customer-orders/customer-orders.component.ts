@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CustomerOrder } from '../../../model/customer_order';
+import { CustomerOrderRequest, CustomerOrderResponse } from '../../../model/customer_order';
 import { CustomerOrderFormComponent } from '../forms/customer-order-form/customer-order-form.component';
 import { CustomerOrderApiService } from '../../../services/api/customer_order/customer_order.service.api';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -17,9 +17,9 @@ import { ReactiveFormsModule } from '@angular/forms';
   styleUrls: ['./customer-orders.component.css']
 })
 export class CustomerOrdersComponent implements OnInit {
-  customer_orders: CustomerOrder[] = [];
+  customer_orders: CustomerOrderResponse[] = [];
   isFormVisible = false;
-  selectedCustomerOrder: CustomerOrder | null = null;
+  selectedCustomerOrder: CustomerOrderRequest | null = null;
 
   constructor(private customerOrderApiService: CustomerOrderApiService) {}
 
@@ -38,12 +38,12 @@ export class CustomerOrdersComponent implements OnInit {
     this.isFormVisible = true;
   }
 
-  editCustomerOrder(customer_order: CustomerOrder): void {
+  editCustomerOrder(customer_order: CustomerOrderRequest): void {
     this.selectedCustomerOrder = { ...customer_order };
     this.isFormVisible = true;
   }
 
-  onFormSubmited(customer_order: CustomerOrder) {
+  onFormSubmited(customer_order: CustomerOrderRequest) {
     if (customer_order.customerOrderId) {
       this.customerOrderApiService.updateCustomerOrder(
         customer_order.customerOrderId,
