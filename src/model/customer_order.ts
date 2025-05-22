@@ -50,8 +50,8 @@ export class CustomerOrderRequest {
   created_at: string;
   customer_id: Customer;
   observations: string[];
-  hamburgers:string[];
-  drinks: string[];
+  hamburger_id:string[];
+  drink_id: string[];
   additional: string[];
 
   constructor(
@@ -60,8 +60,8 @@ export class CustomerOrderRequest {
     description: string,
     created_at: string,
     customer_id: Customer,
-    hamburgers: string[],
-    drinks: string[],
+    hamburger_id: string[],
+    drink_id: string[],
     observations: string[],
     additional: string[]
   ) {
@@ -70,8 +70,8 @@ export class CustomerOrderRequest {
     this.description = description;
     this.created_at = created_at;
     this.customer_id = customer_id;
-    this.hamburgers = hamburgers;
-    this.drinks = drinks;
+    this.hamburger_id = hamburger_id;
+    this.drink_id = drink_id;
     this.observations = observations;
     this.additional = additional;
   }

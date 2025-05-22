@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HamburgerRequestType, HamburgerResponseType } from '../../../../model/hamburger';
 import { Ingredient } from '../../../../model/ingredient';
 import { IngredientApiService } from '../../../../services/api/ingredient/ingredient.service.api';
@@ -8,6 +8,8 @@ import { CustomerOrderRequest, IngredientWrapper, Observation, OrderItemDrink, O
 import { HamburgerApiService } from '../../../../services/api/hamburger/hamburger.service.api';
 import { DrinkApiService } from '../../../../services/api/drink/drink.service.api';
 import { Drink } from '../../../../model/drink';
+import { Customer } from '../../../../model/customer';
+import { CustomerApiService } from '../../../../services/api/customer/customer.service.api';
 
 @Component({
   selector: 'app-customer-order-form',
@@ -25,19 +27,23 @@ export class CustomerOrderFormComponent implements OnInit {
 
   customerOrderForm!: FormGroup;
 
+  availableCustomers: Customer[] = [];
+  customerSelected: Customer[]= [];
+
   availableHamburgers: HamburgerResponseType[] = [];
   selectedHamburgers: OrderItemHamburger[] = [];
 
   availableDrinks: Drink[] = [];
   selectedDrinks: OrderItemDrink[] = [];
 
-  observations: Observation[] = [];
+  informedObservations: string[] = [];
 
   availableAdditional: Ingredient[] = [];
   selectedAdditional: IngredientWrapper[] = [];
 
   constructor(
     private fb: FormBuilder,
+    private customerService: CustomerApiService,
     private hamburgerService: HamburgerApiService,
     private drinkService: DrinkApiService,
     private ingredientService: IngredientApiService
@@ -48,13 +54,22 @@ export class CustomerOrderFormComponent implements OnInit {
     this.loadHamburger();
     this.loadDrink();
     this.loadAdditional();
+    this.loadCustomers();
   }
 
   buildForm(): void {
     this.customerOrderForm = this.fb.group({
+      customer_id: [this.customer_order?.customer_id || '', Validators.required],
       code: [this.customer_order?.code || '', Validators.required],
+      observations: [this.customer_order?.observations || ''],
       description: [this.customer_order?.description || '', Validators.required],
       created_at: [this.customer_order?.created_at || '', Validators.required]
+    });
+  }
+
+  loadCustomers(): void {
+    this.customerService.getCustomers().subscribe((customers: Customer[]) => {
+      this.availableCustomers = customers;
     });
   }
 
@@ -74,6 +89,14 @@ export class CustomerOrderFormComponent implements OnInit {
     this.ingredientService.getIngredients().subscribe((ingredients: Ingredient[]) => {
       this.availableAdditional = ingredients.filter(i => i.additional_flag == "yes");
     });
+  }
+
+  onCustomerSelected(event: Event): void {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+
+    if(selectedValue) {
+      this.customerSelected = this.availableCustomers.filter(i => i.customer_id == selectedValue);
+    }
   }
 
   onHamburgerToggle(hamburger: HamburgerResponseType, event: Event): void {
@@ -104,7 +127,6 @@ export class CustomerOrderFormComponent implements OnInit {
 
     if(checked) {
       this.selectedAdditional.push({ ingredient });
-      console.log(this.selectedAdditional);
       return;
     }
 
@@ -123,13 +145,30 @@ export class CustomerOrderFormComponent implements OnInit {
     return this.selectedAdditional.some(i => i.ingredient.ingredientId === ingredient.ingredientId);
   }
 
+  updateObservationsFromText(): string[] {
+    const text = this.customerOrderForm.get('observations')?.value || '';
+    const observationArray = text.split(';')
+
+    const observationsFormArray = new FormArray(
+      observationArray.map((text: string) => new FormControl(text))
+    );
+
+    return observationsFormArray.value;
+  }
+
   onSubmit(): void {
     if (this.customerOrderForm.valid) {
       const formValue = this.customerOrderForm.value;
 
+      this.updateObservationsFromText();
+
       const result: CustomerOrderRequest = this.customer_order
       ? { ...this.customer_order, ...formValue, additional: this.selectedAdditional.map((i) => i.ingredient.ingredientId) }
       : { ...formValue, additional: this.selectedAdditional.map(i => i.ingredient.ingredientId) };
+
+      result.observations = this.updateObservationsFromText();
+      result.hamburger_id = this.selectedHamburgers.map(i => i.hamburger.hamburgerId!);
+      result.drink_id = this.selectedDrinks.map(i => i.drink.drinkId!);
 
       this.formSubmit.emit(result);
     }

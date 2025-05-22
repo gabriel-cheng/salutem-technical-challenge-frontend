@@ -17,7 +17,13 @@
 
   <div class="mb-3">
     <label for="observation" class="form-label">Observação</label>
-    <textarea id="observation" class="form-control" formControlName="observation" rows="2"></textarea>
+    <textarea
+      id="observation"
+      class="form-control"
+      formControlName="observations"
+      rows="2"
+      placeholder="Para criar mais de uma observação, separe-as com ';'. Ex: obs1; obs2..."
+    ></textarea>
   </div>
 
   <fieldset class="border p-3 mb-3">
@@ -36,15 +42,15 @@
     </div>
   </fieldset>
 
-  <!-- <div class="mb-3">
-    <label for="customerId" class="form-label">Cliente</label>
-    <select id="customerId" class="form-select" formControlName="customerId" required>
+  <div class="mb-3">
+    <label for="customer_id" class="form-label">Cliente</label>
+    <select id="customer_id" class="form-select" formControlName="customer_id" required (change)="onCustomerSelected($event)">
       <option value="">-- Selecione um cliente --</option>
-      <option *ngFor="let customer of customers" [value]="customer.customer_id">
+      <option *ngFor="let customer of availableCustomers" [value]="customer.customer_id">
         {{ customer.name }} - {{ customer.cell }}
       </option>
     </select>
-  </div> -->
+  </div>
 
   <fieldset class="border p-3 mb-3">
     <legend class="w-auto px-2">Bebidas</legend>
